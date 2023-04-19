@@ -1,5 +1,6 @@
 ﻿using RPG.Core;
 using RPG.Movement;
+using System;
 using UnityEngine;
 
 namespace RPG.Combat
@@ -8,15 +9,25 @@ namespace RPG.Combat
     //this class is for attacking
     public class Fighter : MonoBehaviour, IAction
     {
-        [SerializeField] float weaponRange = 2f;
         [SerializeField] float timeBetweenAttack = 1f;
-        [SerializeField] int damage = 10;
+
         [Range(0.7f, 1)]
         [SerializeField] float attackSpeedFraction = 1f;
+        [SerializeField] Weapon defaultWeapon = null;
+
+        [SerializeField] Transform handTransform = null;
+
+
+        Weapon currentWeapon = null;
         private float timeSinceLastAttack = 0f;
-
-
         Health target;
+
+        private void Start()
+        {
+            EquipWeapon(defaultWeapon);
+        }
+
+
 
         private void Update()
         {
@@ -41,7 +52,7 @@ namespace RPG.Combat
 
         private bool GetIsOutofRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) > weaponRange;
+            return Vector3.Distance(transform.position, target.transform.position) > currentWeapon.GetWeaponRange();
         }
 
 
@@ -73,7 +84,7 @@ namespace RPG.Combat
         void Hit()
         {
             if (target == null) return;
-            target.TakeDamage(damage);
+            target.TakeDamage(currentWeapon.GetWeaponDamage());
 
 
         }
@@ -98,6 +109,15 @@ namespace RPG.Combat
             GetComponent<Animator>().ResetTrigger("attack");
             GetComponent<Animator>().SetTrigger("stopAttack");
 
+
+        }
+
+        public void EquipWeapon(Weapon weapon)
+        {
+            currentWeapon = weapon;
+            Animator animator = GetComponent<Animator>();
+            if (animator == null) { Debug.Log("animator is null"); }
+            currentWeapon.Spawn(handTransform, animator);
 
         }
     }

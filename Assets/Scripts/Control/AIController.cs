@@ -7,7 +7,7 @@ namespace RPG.Combat
 {
     public class AIController : MonoBehaviour
     {
-        [SerializeField] float chaseDistance = 5f;
+        [SerializeField] float chaseDistance = 15f;
         [SerializeField] float suspicionTime = 5f;
         [SerializeField] PatrolPath patrolPath;
         [SerializeField] float waypointTolerance = 1f;
@@ -46,7 +46,7 @@ namespace RPG.Combat
             {
                 timeSinceLastSawPlayer = 0f;
                 AttackBehaviour();
-                //Debug.Log("inside Attack Range");
+                Debug.Log("inside Attack Range");
             }
             else
            if (timeSinceLastSawPlayer < suspicionTime)
