@@ -15,7 +15,9 @@ namespace RPG.Combat
         [SerializeField] float attackSpeedFraction = 1f;
         [SerializeField] Weapon defaultWeapon = null;
 
-        [SerializeField] Transform handTransform = null;
+        [SerializeField] Transform rightHandTransform = null;
+        [SerializeField] Transform leftHandTransform = null;
+
 
 
         Weapon currentWeapon = null;
@@ -84,9 +86,21 @@ namespace RPG.Combat
         void Hit()
         {
             if (target == null) return;
-            target.TakeDamage(currentWeapon.GetWeaponDamage());
+            if (currentWeapon.HasProjectile())
+            {
+                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target);
+            }
+            else
+            {
+                target.TakeDamage(currentWeapon.GetWeaponDamage());
+            }
 
 
+        }
+
+        void Shoot()
+        {
+            Hit();
         }
 
 
@@ -117,7 +131,7 @@ namespace RPG.Combat
             currentWeapon = weapon;
             Animator animator = GetComponent<Animator>();
             if (animator == null) { Debug.Log("animator is null"); }
-            currentWeapon.Spawn(handTransform, animator);
+            currentWeapon.Spawn(rightHandTransform, leftHandTransform, animator);
 
         }
     }

@@ -1,3 +1,4 @@
+using RPG.Core;
 using UnityEngine;
 
 namespace RPG.Combat
@@ -9,15 +10,17 @@ namespace RPG.Combat
         [SerializeField] GameObject weaponPrefab = null;
         [SerializeField] int weaponDamage = 10;
         [SerializeField] float weaponRange = 2f;
+        [SerializeField] bool isRightHanded = true;
+        [SerializeField] Projectile projectile;
 
 
         public void Spawn
-            (Transform handTransform, Animator animator)
+            (Transform rightHand, Transform leftHand, Animator animator)
         {
             if (weaponPrefab != null)
             {
+                Transform handTransform = GetTransform(rightHand, leftHand);
                 Instantiate(weaponPrefab, handTransform);
-                Debug.Log("Weapon Equiped");
             }
 
 
@@ -25,6 +28,29 @@ namespace RPG.Combat
                 animator.runtimeAnimatorController = weaponAnimatorOverride;
 
         }
+
+        private Transform GetTransform(Transform rightHand, Transform leftHand)
+        {
+            Transform handTransform;
+            if (isRightHanded) handTransform = rightHand;
+            else handTransform = leftHand;
+            return handTransform;
+        }
+
+        public bool HasProjectile()
+        {
+            return projectile != null;
+        }
+
+        public void LaunchProjectile(Transform rightHand, Transform leftHand, Health target)
+        {
+            //projectile is same hand as arrow ie left hand
+            Projectile projectileInstance = Instantiate(projectile, GetTransform(rightHand, leftHand).position, Quaternion.identity);
+            projectileInstance.SetTarget(target, weaponDamage);
+
+        }
+
+
 
         public int GetWeaponDamage()
         {

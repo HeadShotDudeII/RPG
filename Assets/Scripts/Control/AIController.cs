@@ -46,7 +46,6 @@ namespace RPG.Combat
             {
                 timeSinceLastSawPlayer = 0f;
                 AttackBehaviour();
-                Debug.Log("inside Attack Range");
             }
             else
            if (timeSinceLastSawPlayer < suspicionTime)
