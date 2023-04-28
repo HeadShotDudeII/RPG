@@ -1,4 +1,5 @@
-﻿using RPG.Core;
+﻿using RPG.Attributes;
+using RPG.Core;
 using RPG.Movement;
 using System;
 using UnityEngine;
@@ -14,9 +15,9 @@ namespace RPG.Combat
         [Range(0.7f, 1)]
         [SerializeField] float attackSpeedFraction = 1f;
         [SerializeField] Weapon defaultWeapon = null;
-
         [SerializeField] Transform rightHandTransform = null;
         [SerializeField] Transform leftHandTransform = null;
+        [SerializeField] string defaultWeaponName = "Unarmed";
 
 
 
@@ -26,6 +27,8 @@ namespace RPG.Combat
 
         private void Start()
         {
+
+            // Weapon weapon = Resources.Load<Weapon>(defaultWeaponName);
             EquipWeapon(defaultWeapon);
         }
 
