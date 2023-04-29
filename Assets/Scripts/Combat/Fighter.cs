@@ -23,7 +23,7 @@ namespace RPG.Combat
 
         Weapon currentWeapon = null;
         private float timeSinceLastAttack = 0f;
-        Health target;
+        Health targetHealth;
 
         private void Start()
         {
@@ -39,13 +39,13 @@ namespace RPG.Combat
             timeSinceLastAttack += Time.deltaTime;
 
             //move to target and to the attack.
-            if (target == null) return;
-            if (target.IsDead()) return;
+            if (targetHealth == null) return;
+            if (targetHealth.IsDead()) return;
 
 
             if (GetIsOutofRange())
             {
-                GetComponent<Mover>().MoveTo(target.transform.position, attackSpeedFraction);
+                GetComponent<Mover>().MoveTo(targetHealth.transform.position, attackSpeedFraction);
             }
             else
             {   //once within range isInRange == true will not move only with GetMouseButton(0) holdingdown but not with GetMouseButtonDown(0) clickonce
@@ -57,7 +57,7 @@ namespace RPG.Combat
 
         private bool GetIsOutofRange()
         {
-            return Vector3.Distance(transform.position, target.transform.position) > currentWeapon.GetWeaponRange();
+            return Vector3.Distance(transform.position, targetHealth.transform.position) > currentWeapon.GetWeaponRange();
         }
 
 
@@ -75,7 +75,7 @@ namespace RPG.Combat
 
         private void AttackBeHaviour()
         {
-            transform.LookAt(target.transform);
+            transform.LookAt(targetHealth.transform);
             if (timeSinceLastAttack > timeBetweenAttack)
             {
                 //this will trigger the Hit() event
@@ -88,14 +88,14 @@ namespace RPG.Combat
 
         void Hit()
         {
-            if (target == null) return;
+            if (targetHealth == null) return;
             if (currentWeapon.HasProjectile())
             {
-                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, target);
+                currentWeapon.LaunchProjectile(rightHandTransform, leftHandTransform, targetHealth);
             }
             else
             {
-                target.TakeDamage(currentWeapon.GetWeaponDamage());
+                targetHealth.TakeDamage(currentWeapon.GetWeaponDamage());
             }
 
 
@@ -112,7 +112,7 @@ namespace RPG.Combat
         public void Attack(GameObject combatTarget)
         {
             GetComponent<ActionScheduler>().StartAction(this);
-            target = combatTarget.GetComponent<Health>();
+            targetHealth = combatTarget.GetComponent<Health>();
 
         }
 
@@ -121,7 +121,7 @@ namespace RPG.Combat
             // setting target to null to early will get the player stop fighter action too soon. 
             // fither action will not stop when moving to target
 
-            target = null;
+            targetHealth = null;
             GetComponent<Mover>().Cancel();
             GetComponent<Animator>().ResetTrigger("attack");
             GetComponent<Animator>().SetTrigger("stopAttack");
@@ -136,6 +136,12 @@ namespace RPG.Combat
             if (animator == null) { Debug.Log("animator is null"); }
             currentWeapon.Spawn(rightHandTransform, leftHandTransform, animator);
 
+        }
+
+
+        public Health GetTargetHealth()
+        {
+            return targetHealth;
         }
     }
 }

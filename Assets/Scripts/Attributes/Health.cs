@@ -12,9 +12,11 @@ namespace RPG.Attributes
         [SerializeField] int health = 100;
 
         private bool isDead = false;
-        private void Start()
+        private void Awake()
         {
+            //Change to Awake HealthDisplay can execute before Health
             health = GetComponent<BaseStats>().GetHealth();
+            //Debug.Log(gameObject.name + "Start health is " + health);
         }
         public bool IsDead()
         {
@@ -59,6 +61,17 @@ namespace RPG.Attributes
             {
                 Die();
             }
+        }
+
+        public float GetPercentage()
+        {
+            //Debug.Log("Health is " + health);
+            //Debug.Log("BaseStatsHealth is " + GetComponent<BaseStats>().GetHealth());
+
+            //return 10000*(health/ GetComponent<BaseStats>().GetHealth());
+            //return health;
+            return 100*((float)health/GetComponent<BaseStats>().GetHealth());
+
         }
     }
 
