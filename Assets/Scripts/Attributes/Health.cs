@@ -15,7 +15,7 @@ namespace RPG.Attributes
         private void Awake()
         {
             //Change to Awake HealthDisplay can execute before Health
-            health = GetComponent<BaseStats>().GetHealth();
+            health = GetComponent<BaseStats>().GetStat(Stat.Health);
             //Debug.Log(gameObject.name + "Start health is " + health);
         }
         public bool IsDead()
@@ -24,14 +24,27 @@ namespace RPG.Attributes
 
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(GameObject instigator, int damage)
         {
             health = Mathf.Max(health - damage, 0);
             //Debug.Log("health is " + health);
             if (health <= 0)
             {
                 Die();
+                AwardExperience(instigator);
             }
+        }
+
+        private void AwardExperience(GameObject instigator)
+        {
+            Experience experience = instigator.GetComponent<Experience>();
+            if (experience == null) return;
+
+
+            //experience.GainExperience tells who get the experience
+            //GetComponent<BaseStats>().GetExperienceReward()  how much exp is rewarded.
+            experience.GainExperience(GetComponent<BaseStats>().GetStat(Stat.ExperienceReward));
+
         }
 
         public int GetHealth()
@@ -70,7 +83,7 @@ namespace RPG.Attributes
 
             //return 10000*(health/ GetComponent<BaseStats>().GetHealth());
             //return health;
-            return 100*((float)health/GetComponent<BaseStats>().GetHealth());
+            return 100 * ((float)health / GetComponent<BaseStats>().GetStat(Stat.Health));
 
         }
     }
